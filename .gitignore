@@ -1,0 +1,6 @@
+venv
+__pycache__
+db_account.json
+db.example
+app.old
+example.old

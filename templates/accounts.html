@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+    <h1>ACCOUNTS</h1>
+    <h2>Total: <strong>${{ balance }}</strong></h2>
+    <form action="/account" method="POST">
+        
+        <input type="text" id="account" name="account">
+        <button type="submit">Add account</button>
+    </form>
+    <ul>
+        {% for account in accounts %}
+        <li>{{ account.id }} - ${{ account.balance }}</li>
+        {% endfor %}
+    </ul>
+
+
+
+{% endblock %}
