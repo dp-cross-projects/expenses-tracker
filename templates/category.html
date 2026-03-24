@@ -2,24 +2,59 @@
 
 {% block content %}
 
-    <h1>CATEGORIES</h1>
+    <h1>Categories</h1>
     <form action="/category" method="POST">
         
-        <input type="text" id="category" name="category">
+        <input class="form-control mb-3" type="text" id="category" name="category">
+        
+
+
+       <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input type="radio" name="type" value="income" id="income" class="form-check-input">
+                <label class="form-check-label" for="income">
+                    Income
+                </label>
+            </div>
+            
+            <div class="form-check form-check-inline">
+                <input type="radio" name="type" value="expense" value="expense" class="form-check-input">
+                <label class="form-check-label" for="expense">
+                    Expense
+                </label>
+            </div>
+        </div>
 
         
         
-        <input type="radio" name="type" value="income">Income</radio>
-        <input type="radio" name="type" value="expense">Expense</radio>  
 
-        <button type="submit">Add category</button>
+
+        <div class="mb-3">
+            <button type="button" class="btn btn-warning">+</button>
+        </div>
     </form>
     
-    <ul>
-        {% for category in categories %}
-        <li>{{ category }}</li>
-        {% endfor %}
-        
-    </ul>
+
+
+    <div class="container text-center">
+    <div class="row">
+        <div class="col">
+        <h3>Income</h3>
+            <ul class="list-group list-group-flush">
+                {% for category in categories %}
+                <li class="list-group-item">{{ category }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col">
+        <h3>Expenses</h3>
+            <ul class="list-group list-group-flush">
+                {% for category in categories %}
+                <li class="list-group-item">{{ category }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    </div>
 
 {% endblock %}

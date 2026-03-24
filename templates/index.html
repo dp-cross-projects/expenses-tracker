@@ -9,41 +9,56 @@
     
     <form action="/transaction" method="POST">
 
-        <!-- <p>Account: <strong>Default</strong></p> -->
-        <label>Account</label>
-        <select name="account">
+        
+        <select name="account" class="form-select form-select-lg mb-3">
             {% for account in accounts %}
             <option value="{{ account.id }}">{{ account.id }} - ${{account.balance}}</option>
             {% endfor %}
         </select>   
 
-
+        
         
 
-        <label>Amount</label>
-        <input name="amount" type="number">
-
+        <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input type="text" name="amount" class="form-control" aria-label="Amount (to the nearest dollar)">
+        </div>
         
 
-        <label>Category</label>
-        
-        <select name="category">
+
+        <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupSelect01">Category</label>
+        <select class="form-select" id="inputGroupSelect01">
             {% for category in categories %}
             <option value="{{ category }}">{{ category }}</option>
             {% endfor %}
+        </select>
+        </div>
+        
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input type="radio" name="type" value="income" id="income" class="form-check-input">
+                <label class="form-check-label" for="income">
+                    Income
+                </label>
+            </div>
             
-        </select>   
+            <div class="form-check form-check-inline">
+                <input type="radio" name="type" value="expense" value="expense" class="form-check-input">
+                <label class="form-check-label" for="expense">
+                    Expense
+                </label>
+            </div>
+        </div>
 
-        <label>Date</label>
-        <input type="date" name="date">
-
-        <label for="type">Type</label>
-        
-        <input type="radio" name="type" value="income">Income</radio>
-        <input type="radio" name="type" value="expense">Expense</radio>
-        
-
-        <button type="submit">New Transaction</buton>
+        <div class="mb-3">
+            <input type="date" name="date">
+        </div>
+            
+        <div class="mb-3">
+            <button type="button" class="btn btn-warning">+</button>
+        </div>
+            
     </form>
     </div>
 
