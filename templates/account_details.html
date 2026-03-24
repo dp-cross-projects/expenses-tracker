@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+    <h1>{{ account }}</h1>
+    <h2>Balance: <strong>${{ balance }}</strong></h2>
+    
+    <h2>Income</h2>
+    
+    <ul>
+        {% for transaction in income %}
+        <li>{{ transaction.date }} - {{ transaction.category }} - ${{ transaction.amount }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Expenses</h2>
+
+    <ul>
+        {% for transaction in expenses %}
+        <li>{{ transaction.date }} - {{ transaction.category }} - ${{ transaction.amount }}</li>
+        {% endfor %}
+    </ul>
+
+
+
+{% endblock %}

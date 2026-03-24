@@ -4,25 +4,47 @@
 
     <h1>Transactions</h1>
 
-    <p>Account: <strong>Default</strong></p>
-    <p>Total: <strong>$0</strong></p>
+    
 
-    <h2>Expenses</h2>
-    <buton>Add Expense</buton>
+    
+    <form action="/transaction" method="POST">
 
-    <ul>
-        <li>Amount:</li>
-        <li>Account:</li>
-        <li>Category:</li>
-        <li>Date:</li>
-    </ul>
+        <!-- <p>Account: <strong>Default</strong></p> -->
+        <label>Account</label>
+        <select name="account">
+            {% for account in accounts %}
+            <option value="{{ account.id }}">{{ account.id }} - ${{account.balance}}</option>
+            {% endfor %}
+        </select>   
 
-    <h2>Income</h2>
-    <buton>Add Income</buton>
-    <ul>
-        <li>Amount:</li>
-        <li>Account:</li>
-        <li>Category:</li>
-        <li>Date:</li>
-    </ul>
+
+        
+
+        <label>Amount</label>
+        <input name="amount" type="number">
+
+        
+
+        <label>Category</label>
+        
+        <select name="category">
+            {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+            
+        </select>   
+
+        <label>Date</label>
+        <input type="date" name="date">
+
+        <label for="type">Type</label>
+        
+        <input type="radio" name="type" value="income">Income</radio>
+        <input type="radio" name="type" value="expense">Expense</radio>
+        
+
+        <button type="submit">New Transaction</buton>
+    </form>
+    </div>
+
 {% endblock %}

@@ -11,7 +11,7 @@
     </form>
     <ul>
         {% for account in accounts %}
-        <li>{{ account.id }} - ${{ account.balance }}</li>
+        <li><a href="/account/{{ account.id }}">{{ account.id }} - ${{ account.balance }}</a></li>
         {% endfor %}
     </ul>
 
