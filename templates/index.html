@@ -4,7 +4,15 @@
 
     <h1>Transactions</h1>
 
-    
+    <div class="mb-3">
+        {% if transaction_type == "expense" %}
+            <a href="/" class="btn btn-danger disabled" tabindex="-1" role="button" aria-disabled="true">Expense</a>
+            <a href="/add-income" class="btn btn-success" tabindex="-1" role="button" aria-disabled="true">Income</a>
+        {% else %}
+            <a href="/" class="btn btn-danger" tabindex="-1" role="button" aria-disabled="true">Expense</a>
+            <a href="/add-income" class="btn btn-success disabled" tabindex="-1" role="button" aria-disabled="true">Income</a>
+        {% endif %}
+    </div>
 
     
     <form action="/transaction" method="POST">
@@ -34,22 +42,8 @@
             {% endfor %}
         </select>
         </div>
-        
-        <div class="mb-3">
-            <div class="form-check form-check-inline">
-                <input type="radio" name="type" value="income" id="income" class="form-check-input" required>
-                <label class="form-check-label" for="income">
-                    Income
-                </label>
-            </div>
-            
-            <div class="form-check form-check-inline">
-                <input type="radio" name="type" value="expense" value="expense" class="form-check-input">
-                <label class="form-check-label" for="expense">
-                    Expense
-                </label>
-            </div>
-        </div>
+
+        <input type="hidden" name="type" value="{{ transaction_type }}">
 
         <div class="mb-3">
             <input type="date" name="date" required>
