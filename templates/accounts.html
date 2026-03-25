@@ -3,11 +3,15 @@
 {% block content %}
 
     <h1>Accounts</h1>
-    <h2>Balance: <strong>${{ balance }}</strong></h2>
+    
+    <div class="input-group mb-3">
+        <label class="input-group-text">Balance</label>
+        <span class="input-group-text">${{ balance }}</span>
+    </div>
+    
+    <h2>Add New Account</h2>
     <form action="/account" method="POST">
-        
-        
-        <input class="form-control" type="text" id="account" name="account">
+        <input class="form-control" type="text" id="account" name="account" required>
         <div class="mb-3">
             <button type="button" class="btn btn-warning">+</button>
         </div>

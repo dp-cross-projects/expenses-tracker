@@ -3,15 +3,17 @@
 {% block content %}
 
     <h1>Categories</h1>
+
+    <h2>Add Category</h2>
     <form action="/category" method="POST">
         
-        <input class="form-control mb-3" type="text" id="category" name="category">
+        <input class="form-control mb-3" type="text" id="category" name="category" required>
         
 
 
        <div class="mb-3">
             <div class="form-check form-check-inline">
-                <input type="radio" name="type" value="income" id="income" class="form-check-input">
+                <input type="radio" name="type" value="income" id="income" class="form-check-input" required>
                 <label class="form-check-label" for="income">
                     Income
                 </label>
@@ -41,7 +43,7 @@
         <div class="col">
         <h3>Income</h3>
             <ul class="list-group list-group-flush">
-                {% for category in categories %}
+                {% for category in income_categories %}
                 <li class="list-group-item">{{ category }}</li>
                 {% endfor %}
             </ul>
@@ -49,7 +51,7 @@
         <div class="col">
         <h3>Expenses</h3>
             <ul class="list-group list-group-flush">
-                {% for category in categories %}
+                {% for category in expense_categories %}
                 <li class="list-group-item">{{ category }}</li>
                 {% endfor %}
             </ul>

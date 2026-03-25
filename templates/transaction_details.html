@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+    <h1>Transaction Details</h1>
+    
+    
+
+    <h2>Category</h2>
+
+    <form action="/transaction/update/{{ account }}/{{ transaction_type }}/{{ transaction_id }}" method="POST">
+
+        <select class="form-select" name="category" required>
+            <option value="{{ transaction.category }}">{{ transaction.category }}</option>
+            {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+
+        <h2>Amount</h2>
+        <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input type="text" name="amount" class="form-control" value="{{ transaction.amount }}" required>
+        </div>
+
+        <h2>Date</h2>
+        <div class="mb-3">
+            <input type="date" name="date" value="{{ transaction.date }}" required>
+        </div>
+    
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Update Details</button>
+        </div>
+    </form>
+
+{% endblock %}

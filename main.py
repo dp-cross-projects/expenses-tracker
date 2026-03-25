@@ -8,7 +8,8 @@ from google.cloud.firestore_v1.base_query import FieldFilter
 
 from pydantic import BaseModel
 from typing import Literal, Annotated
-from uuid import UUID
+
+from operator import itemgetter
 
 ## Init firestore database
 cred = credentials.Certificate(".\\db_account.json")
@@ -51,6 +52,22 @@ async def execute_root(request: Request):
         }
     )
 
+@app.get("/transaction/{account_id}/{transaction_type}/{transaction_id}", response_class=HTMLResponse)
+async def render_transaction_details(request: Request, account_id, transaction_type, transaction_id):
+    doc = ACCOUNT_COLLECTION.document(account_id).collection(transaction_type).document(transaction_id)
+    transaction = doc.get().to_dict()
+    categories = get_categories(transaction_type)
+    return templates.TemplateResponse(
+        request=request, name="transaction_details.html", context={
+            "transaction":transaction,
+            "categories":categories,
+            "account":account_id,
+            "transaction_type":transaction_type,
+            "transaction_id":transaction_id
+        }
+    )
+
+
 @app.post("/transaction")
 def create_new_transaction(
     request: Request,
@@ -68,8 +85,68 @@ def create_new_transaction(
     }
     document.add(transaction)
 
+    balance = ACCOUNT_COLLECTION.document(account).get().to_dict()["balance"]
+    if type == "income":
+        
+        new_balance = balance + amount
+        ACCOUNT_COLLECTION.document(account).set({"balance": new_balance})
+    else:
+        new_balance = balance - amount
+        ACCOUNT_COLLECTION.document(account).set({"balance": new_balance})
+
     redirect_url = request.url_for("execute_root")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+
+@app.post("/transaction/update/{account_id}/{transaction_type}/{transaction_id}")
+def update_transaction(
+        request: Request,
+        account_id,
+        transaction_type,
+        transaction_id,
+        amount: Annotated[float, Form()],
+        category: Annotated[str, Form()],
+        date: Annotated[str, Form()]
+    ):
+    doc = ACCOUNT_COLLECTION.document(account_id).collection(transaction_type).document(transaction_id)
+    old_amount = doc.get().to_dict()["amount"]
+
+    doc.set({
+        "amount":amount,
+        "category":category,
+        "date":date
+    })
+
+    balance = ACCOUNT_COLLECTION.document(account_id).get().to_dict()["balance"]
+    if transaction_type == "income":
+        
+        new_balance = balance - old_amount + amount
+        ACCOUNT_COLLECTION.document(account_id).set({"balance": new_balance})
+    else:
+        new_balance = balance + old_amount - amount
+        ACCOUNT_COLLECTION.document(account_id).set({"balance": new_balance})
+
+    redirect_url = f"/account/{account_id}"
+    return RedirectResponse(url=redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+
+@app.post("/transaction/remove/{account_id}/{transaction_type}/{transaction_id}")
+def delete_transaction(request: Request, account_id,transaction_type,transaction_id):
+    doc = ACCOUNT_COLLECTION.document(account_id).collection(transaction_type).document(transaction_id)
+    
+    balance = ACCOUNT_COLLECTION.document(account_id).get().to_dict()["balance"]
+    doc_balance = doc.get().to_dict()["amount"]
+
+    if transaction_type == "income":
+        
+        new_balance = balance - doc_balance
+        ACCOUNT_COLLECTION.document(account_id).set({"balance": new_balance})
+    else:
+        new_balance = balance + doc_balance
+        ACCOUNT_COLLECTION.document(account_id).set({"balance": new_balance})
+
+    doc.delete()
+    redirect_url = f"/account/{account_id}"
+    return RedirectResponse(url=redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+
 #### END HOME ######
 
 ## CATEGORY
@@ -79,10 +156,12 @@ async def render_category(request: Request):
     # collections = []
     # for doc in documents:
     #     collections.append(doc.id)
-    collections = get_categories()
+    income_categories = get_categories("income")
+    expense_categories = get_categories("expense")
+    
 
     return templates.TemplateResponse(
-        request=request, name="category.html", context={"categories": collections}
+        request=request, name="category.html", context={"income_categories": income_categories, "expense_categories": expense_categories}
     )
 
 @app.post("/category")
@@ -128,8 +207,8 @@ async def render_account_details(request: Request, account_id):
     documents = ACCOUNT_COLLECTION.document(account_id)
     balance = documents.get().to_dict()["balance"]
 
-    income = get_transactions(documents, "income")
-    expenses = get_transactions(documents, "expense")
+    income = sorted(get_transactions(documents, "income"), key=itemgetter("date"), reverse=True)
+    expenses = sorted(get_transactions(documents, "expense"), key=itemgetter("date"), reverse=True)
     
     # collections = []
     # total_balance = 0
@@ -184,7 +263,7 @@ def get_transactions(account, type):
     return transactions
 
 def get_categories(type="expense"):
-    documents = CATEGORY_COLLECTION.where(filter=FieldFilter("type","==",type)).stream()#get()
+    documents = CATEGORY_COLLECTION.where(filter=FieldFilter("type","==",type)).stream()
     collections = []
     for doc in documents:
         collections.append(doc.id)
